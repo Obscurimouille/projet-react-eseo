@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { Product } from "./types/product";
+import { CartContext } from "./providers/CartContext";
+import { RouterProvider } from "react-router-dom";
+import router from "./router";
 
 function App() {
+  const [cart, setCart] = useState<Product[]>([]);
+
+  const addToCart = (product: Product) => {
+    setCart([...cart, product]);
+  };
+
+  const removeFromCart = (index: number) => {
+    const newCart = [...cart];
+    newCart.splice(index, 1);
+    setCart(newCart);
+  }
+
+  const emptyCart = () => {
+    setCart([]);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <CartContext.Provider
+      value={{ cart, addToCart: (product: Product) => addToCart(product), removeFromCart, emptyCart }}
+    >
+      <RouterProvider router={router} />
+    </CartContext.Provider>
   );
 }
 
